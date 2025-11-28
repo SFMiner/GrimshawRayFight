@@ -76,8 +76,10 @@ func _update_visual() -> void:
 ## constantly move towards the nearest player if any exist.  If
 ## she reaches a player (within a small threshold) she stops.
 func _physics_process(delta: float) -> void:
-	if not get_tree().is_multiplayer_server():
+	# Only run Alaska's follow–AI on the server.
+	if not multiplayer.is_server():
 		return
+
 	var players := get_tree().get_nodes_in_group("players")
 	if players.is_empty():
 		return

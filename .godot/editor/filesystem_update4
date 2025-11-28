@@ -2,3 +2,5 @@ res://Scripts/GameServer.gd
 res://Scripts/Player.gd
 res://Scripts/Alaska.gd
 res://Scenes/Main.tscn
+res://Scripts/Grimshaw.gd
+res://Scripts/GameSession.gd
