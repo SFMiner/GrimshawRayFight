@@ -4,3 +4,4 @@ res://Scripts/Alaska.gd
 res://Scenes/Main.tscn
 res://Scripts/Grimshaw.gd
 res://Scripts/GameSession.gd
+res://Scenes/GameSession.tscn

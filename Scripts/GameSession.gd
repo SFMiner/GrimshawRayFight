@@ -64,6 +64,7 @@ func _ready() -> void:
 	# Mark Alaska as extremely small by default.  The scale factor is
 	# expressed via the Alaska.gd script.  Here we ensure the
 	# character starts at a tiny size for immediate gameplay impact.
+	
 	if alaska.has_method("set_scale_factor"):
 		alaska.set_scale_factor(0.1)
 	# Set up power up timer only on the server.  Clients do not spawn
@@ -150,3 +151,14 @@ func _on_powerup_timer_timeout() -> void:
 	power_up.position = pos
 	$PowerUps.add_child(power_up)
 	print("Spawned power up in session %d at %s" % [session_id, str(pos)])
+
+
+func _on_peer_connected(id: int) -> void:
+	_add_player(id)
+	if _players.size() == 1:
+		_enable_ai(true)
+
+func _on_peer_disconnected(id: int) -> void:
+	_remove_player(id)
+	if _players.size() == 0:
+		_enable_ai(false)
