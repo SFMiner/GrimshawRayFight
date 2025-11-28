@@ -1,0 +1,67 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Grimshaw's Ray Fight"
+config/description="A cooperative math‑action classroom game where students battle Dr. Grimshaw using reciprocals."
+run/main_scene="res://Scenes/Main.tscn"
+config/features=PackedStringArray("4.5")
+
+[gd_project_settings]
+
+config_version=4
+
+[input]
+
+move_right={
+"deadzone": 0.5,
+"events": [{
+"scancode": 68,
+"type": "key"
+}, {
+"scancode": 16777235,
+"type": "key"
+}]
+}
+move_left={
+"deadzone": 0.5,
+"events": [{
+"scancode": 65,
+"type": "key"
+}, {
+"scancode": 16777233,
+"type": "key"
+}]
+}
+move_up={
+"deadzone": 0.5,
+"events": [{
+"scancode": 87,
+"type": "key"
+}, {
+"scancode": 16777232,
+"type": "key"
+}]
+}
+move_down={
+"deadzone": 0.5,
+"events": [{
+"scancode": 83,
+"type": "key"
+}, {
+"scancode": 16777234,
+"type": "key"
+}]
+}
+
+[rendering]
+
+quality/2d/use_pixel_snap=true

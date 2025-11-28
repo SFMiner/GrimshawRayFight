@@ -1,0 +1,40 @@
+; A self contained game session.  One GameSession represents a
+; complete match for a group of players.  The GameServer will spawn
+; multiple instances of this scene when more than one game is
+; required to accommodate all connected players.
+;
+; The root node holds references to the session manager script.  It
+; contains child nodes for the map, players, Alaska (the NPC to
+; rescue), Dr. Grimshaw and a container for power‑ups.
+
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://Scripts/GameSession.gd" id=1]
+[ext_resource type="PackedScene" path="res://Scenes/Player.tscn" id=2]
+[ext_resource type="PackedScene" path="res://Scenes/Alaska.tscn" id=3]
+[ext_resource type="PackedScene" path="res://Scenes/Grimshaw.tscn" id=4]
+[ext_resource type="PackedScene" path="res://Scenes/PowerUp.tscn" id=5]
+
+[node name="GameSession" type="Node2D"]
+script = ExtResource( 1 )
+
+; Container for static classroom geometry.  In a real project this
+; would include obstacles (tables, shelves, etc.).  For now it is
+; empty and can be populated at runtime.
+[node name="Map" type="Node2D" parent="."]
+
+; Root node under which all player instances are spawned.
+[node name="PlayersRoot" type="Node2D" parent="."]
+
+; Instance of Alaska, the NPC student that must be rescued.  This
+; instance is created in advance so the server can assign it a
+; network authority.
+[node name="Alaska" parent="." instance=ExtResource( 3 )]
+
+; Instance of Dr. Grimshaw, the boss character.  Similarly to Alaska
+; the server will control this instance.
+[node name="Grimshaw" parent="." instance=ExtResource( 4 )]
+
+; Node to hold spawned power ups.  Each PowerUp will be instanced
+; here and managed by the session script.
+[node name="PowerUps" type="Node2D" parent="."]

@@ -1,0 +1,16 @@
+63f7b34db8d8cdea90c76aacccf841ec
+::res://::1764345261
+::res://Scenes/::1764345230
+Alaska.tscn::PackedScene::-1::1764345230::0::1::::<><><>0<>0<><>::res://Scripts/Alaska.gd
+GameSession.tscn::PackedScene::-1::1764345230::0::1::::<><><>0<>0<><>::res://Scripts/GameSession.gd<>res://Scenes/Player.tscn<>res://Scenes/Alaska.tscn<>res://Scenes/Grimshaw.tscn<>res://Scenes/PowerUp.tscn
+Grimshaw.tscn::PackedScene::-1::1764345230::0::1::::<><><>0<>0<><>::res://Scripts/Grimshaw.gd
+Main.tscn::PackedScene::-1::1764345230::0::1::::<><><>0<>0<><>::res://Scripts/GameServer.gd
+Player.tscn::PackedScene::-1::1764345230::0::1::::<><><>0<>0<><>::res://Scripts/Player.gd
+PowerUp.tscn::PackedScene::-1::1764345230::0::1::::<><><>0<>0<><>::res://Scripts/PowerUp.gd
+::res://Scripts/::1764345231
+Alaska.gd::GDScript::364896006513278049::1764345231::0::1::::<>CharacterBody2D<><>0<>0<><>::
+GameServer.gd::GDScript::3980476342307131431::1764345230::0::1::::<>Node<><>0<>0<><>::
+GameSession.gd::GDScript::2806801476523502634::1764345230::0::1::::<>Node2D<><>0<>0<><>::
+Grimshaw.gd::GDScript::1758727800448223968::1764345231::0::1::::<>CharacterBody2D<><>0<>0<><>::
+Player.gd::GDScript::841982347397321726::1764345231::0::1::::<>CharacterBody2D<><>0<>0<><>::
+PowerUp.gd::GDScript::124206597862042500::1764345231::0::1::::<>Node2D<><>0<>0<><>::
