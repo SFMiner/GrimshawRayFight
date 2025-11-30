@@ -1,0 +1,129 @@
+[gd_scene load_steps=10 format=4 uid="uid://c1vu54sim6q8x"]
+
+[ext_resource type="Script" uid="uid://bf8vu0o4bcnuo" path="res://Scripts/GameSession.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://d161i1vliabxd" path="res://Assets/Tiles 2.png" id="2_468i8"]
+[ext_resource type="PackedScene" uid="uid://divrcwmp2bskk" path="res://Scenes/Alaska.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://v28a0ukf31ek" path="res://Scenes/Grimshaw.tscn" id="4"]
+[ext_resource type="PackedScene" uid="uid://cugdjvglbfy43" path="res://Scenes/table.tscn" id="4_o6vwh"]
+[ext_resource type="PackedScene" uid="uid://xyfutgdisuf5" path="res://Scenes/table_wide.tscn" id="5_6b235"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_468i8"]
+size = Vector2(722, 42)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wwytc"]
+texture = ExtResource("2_468i8")
+texture_region_size = Vector2i(51, 51)
+0:0/0 = 0
+0:0/0/terrain_set = 0
+1:1/0 = 0
+1:1/0/terrain_set = 0
+1:0/0 = 0
+1:0/0/terrain_set = 0
+0:1/0 = 0
+0:1/0/terrain_set = 0
+
+[sub_resource type="TileSet" id="TileSet_h60o1"]
+tile_size = Vector2i(51, 51)
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = "Terrain 0"
+terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_wwytc")
+
+[node name="GameSession" type="Node2D"]
+script = ExtResource("1")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(0, 63)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(351, -43)
+shape = SubResource("RectangleShape2D_468i8")
+
+[node name="Map" type="Node2D" parent="."]
+position = Vector2(0, 63)
+
+[node name="ColorRect2" type="ColorRect" parent="Map"]
+offset_top = -64.0
+offset_right = 713.0
+offset_bottom = 1.0
+color = Color(0.5568628, 1, 0.6117647, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Map"]
+offset_top = -54.0
+offset_right = 41.0
+offset_bottom = 2.0
+color = Color(0.2667463, 0.19013229, 0.18798944, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="Map/ColorRect"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 39.0
+offset_bottom = 53.0
+color = Color(0.5372549, 0.40784314, 0.40392157, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect2" type="ColorRect" parent="Map/ColorRect/ColorRect2"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 8.0
+offset_right = 29.0
+offset_bottom = 24.0
+color = Color(1.8289685e-06, 0.5572778, 0.6544879, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect3" type="ColorRect" parent="Map/ColorRect/ColorRect2/ColorRect2"]
+layout_mode = 0
+offset_left = 1.0
+offset_right = 22.0
+offset_bottom = 15.0
+color = Color(0.23921569, 0.8666667, 1, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ColorRect4" type="ColorRect" parent="Map/ColorRect/ColorRect2/ColorRect2"]
+layout_mode = 0
+offset_left = 21.0
+offset_right = 22.0
+offset_bottom = 15.0
+color = Color(0.62993264, 0.92373776, 0.9999998, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="TileMapLayer" type="TileMapLayer" parent="Map"]
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAEAAAABAAAAAAABAAAAAAABAAEAAAABAAEAAAAAAAIAAAAAAAAAAAAAAAMAAAAAAAEAAAABAAIAAAABAAAAAAABAAMAAAABAAEAAAAAAAQAAAAAAAAAAAAAAAUAAAAAAAEAAAABAAQAAAABAAAAAAABAAUAAAABAAEAAAAAAAYAAAAAAAAAAAAAAAcAAAAAAAEAAAABAAYAAAABAAAAAAABAAcAAAABAAEAAAAAAAgAAAAAAAAAAAAAAAkAAAAAAAEAAAABAAgAAAABAAAAAAABAAkAAAABAAEAAAACAAAAAAAAAAAAAAACAAEAAAAAAAEAAAADAAAAAAABAAAAAAADAAEAAAABAAEAAAACAAIAAAAAAAAAAAACAAMAAAAAAAEAAAADAAIAAAABAAAAAAADAAMAAAABAAEAAAACAAQAAAAAAAAAAAACAAUAAAAAAAEAAAADAAQAAAABAAAAAAADAAUAAAABAAEAAAACAAYAAAAAAAAAAAACAAcAAAAAAAEAAAADAAYAAAABAAAAAAADAAcAAAABAAEAAAACAAgAAAAAAAAAAAACAAkAAAAAAAEAAAADAAgAAAABAAAAAAADAAkAAAABAAEAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAEAAAAFAAAAAAABAAAAAAAFAAEAAAABAAEAAAAEAAIAAAAAAAAAAAAEAAMAAAAAAAEAAAAFAAIAAAABAAAAAAAFAAMAAAABAAEAAAAEAAQAAAAAAAAAAAAEAAUAAAAAAAEAAAAFAAQAAAABAAAAAAAFAAUAAAABAAEAAAAEAAYAAAAAAAAAAAAEAAcAAAAAAAEAAAAFAAYAAAABAAAAAAAFAAcAAAABAAEAAAAEAAgAAAAAAAAAAAAEAAkAAAAAAAEAAAAFAAgAAAABAAAAAAAFAAkAAAABAAEAAAAGAAAAAAAAAAAAAAAGAAEAAAAAAAEAAAAHAAAAAAABAAAAAAAHAAEAAAABAAEAAAAGAAIAAAAAAAAAAAAGAAMAAAAAAAEAAAAHAAIAAAABAAAAAAAHAAMAAAABAAEAAAAGAAQAAAAAAAAAAAAGAAUAAAAAAAEAAAAHAAQAAAABAAAAAAAHAAUAAAABAAEAAAAGAAYAAAAAAAAAAAAGAAcAAAAAAAEAAAAHAAYAAAABAAAAAAAHAAcAAAABAAEAAAAGAAgAAAAAAAAAAAAGAAkAAAAAAAEAAAAHAAgAAAABAAAAAAAHAAkAAAABAAEAAAAIAAAAAAAAAAAAAAAIAAEAAAAAAAEAAAAJAAAAAAABAAAAAAAJAAEAAAABAAEAAAAIAAIAAAAAAAAAAAAIAAMAAAAAAAEAAAAJAAIAAAABAAAAAAAJAAMAAAABAAEAAAAIAAQAAAAAAAAAAAAIAAUAAAAAAAEAAAAJAAQAAAABAAAAAAAJAAUAAAABAAEAAAAIAAYAAAAAAAAAAAAIAAcAAAAAAAEAAAAJAAYAAAABAAAAAAAJAAcAAAABAAEAAAAIAAgAAAAAAAAAAAAIAAkAAAAAAAEAAAAJAAgAAAABAAAAAAAJAAkAAAABAAEAAAAKAAAAAAAAAAAAAAAKAAEAAAAAAAEAAAALAAAAAAABAAAAAAALAAEAAAABAAEAAAAKAAIAAAAAAAAAAAAKAAMAAAAAAAEAAAALAAIAAAABAAAAAAALAAMAAAABAAEAAAAKAAQAAAAAAAAAAAAKAAUAAAAAAAEAAAALAAQAAAABAAAAAAALAAUAAAABAAEAAAAKAAYAAAAAAAAAAAAKAAcAAAAAAAEAAAALAAYAAAABAAAAAAALAAcAAAABAAEAAAAKAAgAAAAAAAAAAAAKAAkAAAAAAAEAAAALAAgAAAABAAAAAAALAAkAAAABAAEAAAAMAAAAAAAAAAAAAAAMAAEAAAAAAAEAAAANAAAAAAABAAAAAAANAAEAAAABAAEAAAAMAAIAAAAAAAAAAAAMAAMAAAAAAAEAAAANAAIAAAABAAAAAAANAAMAAAABAAEAAAAMAAQAAAAAAAAAAAAMAAUAAAAAAAEAAAANAAQAAAABAAAAAAANAAUAAAABAAEAAAAMAAYAAAAAAAAAAAAMAAcAAAAAAAEAAAANAAYAAAABAAAAAAANAAcAAAABAAEAAAAMAAgAAAAAAAAAAAAMAAkAAAAAAAEAAAANAAgAAAABAAAAAAANAAkAAAABAAEAAAA=")
+tile_set = SubResource("TileSet_h60o1")
+
+[node name="PlayersRoot" type="Node2D" parent="."]
+position = Vector2(0, 63)
+
+[node name="Alaska" parent="." instance=ExtResource("3")]
+position = Vector2(322, 294)
+base_speed = null
+
+[node name="Grimshaw" parent="." instance=ExtResource("4")]
+position = Vector2(18, 115)
+
+[node name="PowerUps" type="Node2D" parent="."]
+position = Vector2(0, 63)
+
+[node name="Table" parent="." instance=ExtResource("4_o6vwh")]
+position = Vector2(238, 178)
+
+[node name="Table2" parent="." instance=ExtResource("4_o6vwh")]
+position = Vector2(195, 391)
+
+[node name="Table3" parent="." instance=ExtResource("4_o6vwh")]
+position = Vector2(438, 170)
+
+[node name="Table4" parent="." instance=ExtResource("4_o6vwh")]
+position = Vector2(332, 542)
+
+[node name="Table5" parent="." instance=ExtResource("5_6b235")]
+position = Vector2(370, 276)
+
+[node name="Table6" parent="." instance=ExtResource("5_6b235")]
+position = Vector2(181, 244)
+
+[node name="Table7" parent="." instance=ExtResource("5_6b235")]
+position = Vector2(101, 339)

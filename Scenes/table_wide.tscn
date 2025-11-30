@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://xyfutgdisuf5"]
+
+[ext_resource type="Script" uid="uid://dwx2etfauarvr" path="res://Scenes/object.gd" id="1_btj6k"]
+[ext_resource type="Texture2D" uid="uid://ch4rkdxoxqm1j" path="res://Assets/big_table_wide.png" id="2_btj6k"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ix8et"]
+size = Vector2(93.33333, 9.33333)
+
+[node name="Table" type="StaticBody2D"]
+z_as_relative = false
+scale = Vector2(0.75, 0.75)
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("1_btj6k")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(48, -38.666664)
+texture = ExtResource("2_btj6k")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+z_as_relative = false
+y_sort_enabled = true
+position = Vector2(47.333336, -43)
+shape = SubResource("RectangleShape2D_ix8et")

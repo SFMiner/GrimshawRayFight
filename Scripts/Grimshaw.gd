@@ -22,25 +22,47 @@ extends CharacterBody2D
 ## 1 enlarge them.
 @export var scale_factors : Array[float] = [0.33, 0.4, 0.5, 2.0, 3.0, 4.0]
 
+
+@onready var sprint = $Sprite2D
+@onready var ap = $AnimationPlayer
+
 ## Timer to schedule attacks.  Only runs on the server.
 var _attack_timer : Timer
 
 ## Cache of GameSession so Grimshaw can access players and Alaska
-var _session : Node = null
+var ai_enabled: bool = true
 
+var _alaska : CharacterBody2D = null
+var _session : Node2D = null
+
+		
+
+func set_ai_enabled(enabled: bool) -> void:
+	ai_enabled = enabled
+	# If we already have an attack timer, pause/unpause it.
+	if _attack_timer:
+		_attack_timer.paused = not enabled
+	
 func _ready() -> void:
 	# Determine the parent session. This assumes Grimshaw is
 	# instanced within GameSession.tscn.
-	_session = get_parent()
+
 
 	# Set up attack timer only on the server.
 	if multiplayer.is_server():
 		_attack_timer = Timer.new()
 		_attack_timer.wait_time = fire_interval
 		_attack_timer.one_shot = false
-		_attack_timer.autostart = true
+		_attack_timer.autostart = false
 		_attack_timer.timeout.connect(_on_attack_timer_timeout)
 		add_child(_attack_timer)
+
+		# Make sure timer state matches initial AI flag
+		if ai_enabled:
+			_attack_timer.start()
+			_attack_timer.paused = false
+		else:
+			_attack_timer.paused = true
 
 	# Ensure Grimshaw has a collision shape.  This aids in power up
 	# detection should he enter a power up zone inadvertently.  The
@@ -54,24 +76,44 @@ func _ready() -> void:
 
 ## Called periodically on the server to fire at a random target.
 func _on_attack_timer_timeout() -> void:
+	if not ai_enabled:
+		return
 	# Choose a target.  Grimshaw prioritises Alaska if she is in
 	# existence and then picks a random player.
 	var targets : Array[Node] = []
-	if _session and _session.has_node("Alaska"):
-		var alaska_node : Node = _session.get_node("Alaska")
-		targets.append(alaska_node)
+
 	# Append all players to potential targets
 	var players := get_tree().get_nodes_in_group("players")
 	for p in players:
 		targets.append(p)
 	if targets.is_empty():
 		return
+	var target : Node = null
+	if _alaska.scale.x > 0.201:
+	# If Alaska > scale 0.2, target Alaska
+		target = _alaska
+	else:
 	# Pick random target
-	var target : Node = targets[randi() % targets.size()]
+		target = targets[randi() % targets.size()]
 	# Pick random scale factor
 	var factor : float = scale_factors[randi() % scale_factors.size()]
 	# Fire the ray: call multiply_scale() on the target via RPC.
 	if target.has_method("multiply_scale"):
-		target.rpc("multiply_scale", factor)
+		#target.rpc("multiply_scale", factor)
+		if target.name == "Alaska":
+			target.multiply_scale(_alaska.scale.x / 0.2)
+		else:
+			target.multiply_scale(factor)
 		# Optionally print debug information on the server
 		print("Grimshaw hit %s with scale factor %.2f" % [target.name, factor])
+
+
+func _on_tree_entered() -> void:
+	print("Grimshaw ready)")
+	_session = get_parent()
+	print(_session.get_children())
+	if _session:
+		print("_session.name = " +  _session.name)
+		if _session.has_node("Alaska"):
+			_alaska = _session.get_node("Alaska")
+			print("Alaska.name = " +  _alaska.name)

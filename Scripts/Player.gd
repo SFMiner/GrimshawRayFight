@@ -16,6 +16,8 @@ extends CharacterBody2D
 ## Base movement speed in pixels per second.  This value is
 ## multiplied by the current scale factor to derive actual speed.
 @export var base_speed : float = 100.0
+@onready var ap = $AnimationPlayer
+@onready var sprint = $Sprite2D
 
 ## Current scale factor.  1.0 means normal size.  Values less than
 ## one shrink the player and slow them down.  Values greater than
@@ -23,11 +25,11 @@ extends CharacterBody2D
 var scale_factor : float = 1.0:
 	set(new_value):
 		# Custom logic when the variable is set
-		print("Setting scale_factor to:", new_value)
+		print("Setting player scale_factor to:", new_value)
 		scale_factor = new_value # Important: assign the new value to the variable
 	get:
 		# Custom logic when the variable is accessed
-		print("Getting scale_factor")
+#		print("Getting scale_factor")
 		return scale_factor
 
 ## Unique peer identifier controlling this player.  This value is
@@ -45,7 +47,7 @@ func _ready() -> void:
 	var colour : Color = Color.from_hsv(hue, 0.7, 1.0)
 	$Visual.color = colour
 	# Initialise visual size according to scale factor
-	_update_visual()
+#	_update_visual(scale_factor)
 
 	# Ensure a collision shape exists.  If none is defined in the
 	# scene the player may pass through obstacles.  Create a
@@ -74,7 +76,7 @@ func init_player(id: int) -> void:
 ## method should be used whenever modifying scale_factor to ensure
 ## consistency between the numeric value and the actual scale on
 ## screen.  It can be called locally or via RPC.
-@rpc
+#@rpc
 func set_scale_factor(value: float) -> void:
 	scale_factor = clamp(value, 0.05, 20.0)
 	_update_visual()
@@ -88,7 +90,7 @@ func get_scale_factor() -> float:
 ## provided multiplier.  This is called when another student fires
 ## the wrong scale factor at this player.  To restore a player to
 ## normal size call `set_scale_factor(1.0)`.
-@rpc
+#@rpc
 func multiply_scale(multiplier: float) -> void:
 	set_scale_factor(scale_factor * multiplier)
 
@@ -97,15 +99,16 @@ func multiply_scale(multiplier: float) -> void:
 ## shape are resized.  In a more complete implementation you might
 ## use separate sprites for different animations.
 func _update_visual() -> void:
-	var size_base := Vector2(32, 32)
-	var new_size := size_base * scale_factor
-	if $Visual and $Visual.has_method("set_size"):
-		$Visual.size = new_size
+	scale = Vector2(scale_factor,scale_factor)
+	#@var size_base := Vector2(32, 32)
+	#var new_size *= scale_factor
+	#if $Visual and $Visual.has_method("set_size"):
+	#	$Visual.size = new_size
 	# Adjust collision shape to match new bounds if present
-	if has_node("CollisionShape2D"):
-		var shape = $CollisionShape2D.shape
-		if shape and shape is RectangleShape2D:
-			shape.extents = new_size / 2
+	#if has_node("CollisionShape2D"):
+	#	var shape = $CollisionShape2D.shape
+	#	if shape and shape is RectangleShape2D:
+	#		shape.extents = new_size / 2
 
 ## Handles movement input.  Only executes on the authority (the
 ## controlling peer).  Moves the player relative to the current
@@ -114,11 +117,9 @@ func _physics_process(delta: float) -> void:
 	# Only process movement on the controlling client or on the
 	# server for non-player characters. `multiplayer` is the
 	# MultiplayerAPI attached to this node.
-	var mp := multiplayer
-	var is_authority := mp.is_server() or mp.get_unique_id() == peer_id
-
-	if not is_authority:
+	if not is_multiplayer_authority():
 		return
+		
 	var direction := Vector2.ZERO
 	# Movement uses standard WASD or arrow keys.  These actions
 	# should be configured in the project settings input map.  If
@@ -134,8 +135,28 @@ func _physics_process(delta: float) -> void:
 		direction.y -= 1
 	if direction.length() > 0:
 		direction = direction.normalized()
+
+	var angle_deg := rad_to_deg(direction.angle())
+	if angle_deg < 0:
+		angle_deg += 360
+	var state := ""
+
+	if angle_deg >= 45 and angle_deg < 135:
+		state = "walk_down"
+	elif angle_deg >= 135 and angle_deg < 225:
+		state = "walk_left"
+	elif angle_deg >= 225 and angle_deg < 315:
+		state = "walk_up"
+	else:
+		state = "walk_right"
 	# Actual speed is the base speed scaled by the current scale
 	# factor.  Enlarged players move faster, shrunk players move
 	# slower.
 	velocity = direction * base_speed * scale_factor
+	if velocity == Vector2.ZERO:
+		ap.stop()
+	else:
+		z_index = global_position.y/5
+		$Label.text = str(z_index)
+		ap.play(state)
 	move_and_slide()

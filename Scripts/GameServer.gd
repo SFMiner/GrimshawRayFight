@@ -62,7 +62,9 @@ func _ready() -> void:
 	# arguments via OS.get_cmdline_args().  If the user passes
 	# `--client` then we attempt to connect to a running server.
 	var args : Array = OS.get_cmdline_args()
+	
 	var as_client : bool = args.has("--client")
+
 	if as_client:
 		var address := DEFAULT_SERVER_ADDRESS
 		var port := SERVER_PORT

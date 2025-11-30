@@ -53,6 +53,7 @@ var _powerup_timer : Timer
 ## controlled by the server to fire rays at players.
 var alaska : CharacterBody2D
 var grimshaw : CharacterBody2D
+var _ai_enabled: bool = false
 
 ## Called when the GameSession enters the scene tree.  Performs
 ## initialisation such as finding child nodes and starting timers.
@@ -65,8 +66,8 @@ func _ready() -> void:
 	# expressed via the Alaska.gd script.  Here we ensure the
 	# character starts at a tiny size for immediate gameplay impact.
 	
-	if alaska.has_method("set_scale_factor"):
-		alaska.set_scale_factor(0.1)
+#	if alaska.has_method("set_scale_factor"):
+#		alaska.set_scale_factor(0.1)
 	# Set up power up timer only on the server.  Clients do not spawn
 	# power ups locally; they simply see them appear when the server
 	# adds them to the scene.
@@ -77,46 +78,66 @@ func _ready() -> void:
 		_powerup_timer.autostart = true
 		_powerup_timer.timeout.connect(_on_powerup_timer_timeout)
 		add_child(_powerup_timer)
+		
+		# --- DEBUG: spawn a local test player when running the server ---
+		var server_id := multiplayer.get_unique_id()
+		spawn_player(server_id)
+		
+		
 ## Spawns a player character for the peer with the given ID.  This
 ## method should only be called on the server.  It instantiates
 ## Player.tscn, assigns network authority to the connecting peer and
 ## positions the player within the map.  Players are stored in the
 ## `_players` dictionary for later management.
 func spawn_player(peer_id : int) -> void:
-	if not get_tree().is_multiplayer_server():
+	if not multiplayer.is_server():
 		return
 	if _players.has(peer_id):
 		return
+		
 	var player : CharacterBody2D = _player_scene.instantiate()
 	player.name = "Player_%d" % peer_id
+	
 	# Assign network authority to the connecting peer.  This allows
 	# the client to control its own character while the server
 	# replicates its state to other clients.
 	player.set_multiplayer_authority(peer_id)
+	
 	# Randomise initial position within a central area.  In a full
 	# implementation this could be a spawn point list to avoid
 	# overlapping spawns.
-	player.position = Vector2(randf() * 400 - 200, randf() * 400 - 200)
+	player.position = Vector2(randf() * 200 + 50, randf() * 200 + 50)
+	
 	# Add to the scene and track in dictionary
 	$PlayersRoot.add_child(player)
 	_players[peer_id] = player
+
 	# Initialise the player.  The init_player function lives in
 	# Player.gd and assigns peer_id and colour.
 	if player.has_method("init_player"):
 		player.init_player(peer_id)
+
 	print("Spawned player %d in session %d" % [peer_id, session_id])
+
+	# If this is the first player in the session, enable AI.
+	if _players.size() == 1:
+		_enable_ai()
 
 ## Removes a player from the session.  When a peer disconnects the
 ## GameServer calls this method to clean up the character.  Only
 ## the server should invoke this.
 func remove_player(peer_id : int) -> void:
-	if not get_tree().is_multiplayer_server():
+	if not multiplayer.is_server():
 		return
 	if _players.has(peer_id):
 		var player : Node = _players[peer_id]
 		player.queue_free()
 		_players.erase(peer_id)
 		print("Removed player %d from session %d" % [peer_id, session_id])
+
+		# If that was the last player, disable AI.
+		if _players.size() == 0:
+			_disable_ai()
 
 ## Server callback for the power up timer.  Spawns a new power up in
 ## a random quadrant of the map.  The power up will restore the
@@ -129,7 +150,7 @@ func _on_powerup_timer_timeout() -> void:
 	var power_up : Node2D = _powerup_scene.instantiate()
 	# Attempt to set the radius property on the instance.  If the
 	# PowerUp script defines `radius` as exported, this will take
-	# effect.  Otherwise the default size is used.
+	# effect.  Otherwise the default size is used.s
 	if power_up.has_variable("radius"):
 		power_up.set("radius", powerup_radius)
 	# Determine a quadrant for placement.  The classroom is conceptually
@@ -152,13 +173,23 @@ func _on_powerup_timer_timeout() -> void:
 	$PowerUps.add_child(power_up)
 	print("Spawned power up in session %d at %s" % [session_id, str(pos)])
 
+func _enable_ai() -> void:
+	_ai_enabled = true
 
-func _on_peer_connected(id: int) -> void:
-	_add_player(id)
-	if _players.size() == 1:
-		_enable_ai(true)
+	# Tell Grimshaw and Alaska that AI is active, if they support it.
+	if is_instance_valid(grimshaw) and grimshaw.has_method("set_ai_enabled"):
+		grimshaw.set_ai_enabled(true)
 
-func _on_peer_disconnected(id: int) -> void:
-	_remove_player(id)
-	if _players.size() == 0:
-		_enable_ai(false)
+	if is_instance_valid(alaska) and alaska.has_method("set_ai_enabled"):
+		alaska.set_ai_enabled(true)
+		
+		
+func _disable_ai() -> void:
+	_ai_enabled = false
+
+	# Tell Grimshaw and Alaska that AI is disabled.
+	if is_instance_valid(grimshaw) and grimshaw.has_method("set_ai_enabled"):
+		grimshaw.set_ai_enabled(false)
+
+	if is_instance_valid(alaska) and alaska.has_method("set_ai_enabled"):
+		alaska.set_ai_enabled(false)

@@ -1,0 +1,6 @@
+CollisionShape2D
+StaticBody2D
+ColorRect
+TileMapLayer
+Label
+Sprite2D

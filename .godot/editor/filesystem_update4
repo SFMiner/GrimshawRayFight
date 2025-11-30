@@ -5,3 +5,9 @@ res://Scenes/Main.tscn
 res://Scripts/Grimshaw.gd
 res://Scripts/GameSession.gd
 res://Scenes/GameSession.tscn
+res://Scenes/Player.tscn
+res://Scenes/Grimshaw.tscn
+res://Scenes/Alaska.tscn
+res://Scenes/table.tscn
+res://Scenes/object.gd
+res://Scenes/table_wide.tscn
